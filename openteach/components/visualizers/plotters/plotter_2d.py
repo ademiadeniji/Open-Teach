@@ -35,11 +35,12 @@ class PlotHand2D(Plotter):
     def _check_thumb_bounds(self):
         if check_file(self.thumb_bounds_path):
             self.thumb_bounds = get_npz_data(self.thumb_bounds_path)
-
+            
     def _set_limits(self):
         plt.axis([-0.12, 0.12, -0.02, 0.2])
 
     def _draw_thumb_bounds(self):
+        #thumb_to_draw = np.array(self.thumb_bounds[0],self.thumb_bounds[1],self.thumb_bounds[4],self.thumb_bounds[5])
         for idx in range(VR_THUMB_BOUND_VERTICES):
             plot_line(
                 self.thumb_bounds[idx][0], 
@@ -88,5 +89,5 @@ class PlotHand2D(Plotter):
         self.socket.send_image(plot)
 
         # Resetting and pausing the 3D plot
-        plt.pause(0.001) # This make the graph show up if matplotlib is in Tkinter mode
+        #plt.pause(0.001) # This make the graph show up if matplotlib is in Tkinter mode
         plt.cla()

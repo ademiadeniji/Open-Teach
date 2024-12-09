@@ -219,8 +219,8 @@ class DexArmControl():
         # Moving
         start_pose = self.get_arm_cartesian_coords()
         poses = generate_cartesian_space_min_jerk(
-            start = start_pose, 
-            goal = cartesian_pos, 
+            start = start_pose,
+            goal = cartesian_pos,
             time_to_go = duration,
             hz = self.franka.control_freq
         )
@@ -228,7 +228,7 @@ class DexArmControl():
         for pose in poses:
             self.arm_control(pose)
 
-        # Debugging the pose difference 
+        # Debugging the pose difference
         last_pose = self.get_arm_cartesian_coords()
         pose_error = cartesian_pos - last_pose
         debug_quat_diff = transform_utils.quat_multiply(last_pose[3:], transform_utils.quat_inverse(cartesian_pos[3:]))

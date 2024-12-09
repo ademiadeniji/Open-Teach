@@ -143,6 +143,8 @@ class ZMQCameraSubscriber(threading.Thread):
             self.socket.setsockopt(zmq.SUBSCRIBE, b"rgb_image")
         elif self._topic_type == 'Depth':
             self.socket.setsockopt(zmq.SUBSCRIBE, b"depth_image")
+        elif self._topic_type == 'iPhone_Depth':
+            self.socket.setsockopt(zmq.SUBSCRIBE, b"depth_image")
 
     def recv_intrinsics(self):
         raw_data = self.socket.recv()
@@ -161,7 +163,10 @@ class ZMQCameraSubscriber(threading.Thread):
         striped_data = raw_data.lstrip(b"depth_image ")
         data = pickle.loads(striped_data)
         depth_image = bl.unpack_array(data['depth_image'])
-        return np.array(depth_image, dtype = np.int16), data['timestamp']
+        if self._topic_type == 'iPhone_Depth':
+            return np.array(depth_image*1000, dtype = np.int16), data['timestamp']
+        else:
+            return np.array(depth_image, dtype = np.int16), data['timestamp']
         
     def stop(self):
         print('Closing the subscriber socket in {}:{}.'.format(self._host, self._port))

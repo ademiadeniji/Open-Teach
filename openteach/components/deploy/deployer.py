@@ -42,7 +42,7 @@ class DeployServer(Component):
         try:
 
             # Kinova should be applied earlier than allegro
-            robot_order = ['franka', 'allegro']
+            robot_order = ['kinova', 'allegro']
 
             for robot in robot_order:
                 if robot in robot_action_dict.keys():

@@ -52,32 +52,58 @@ class AllegroKDL(object):
         output_frame = self.chains[finger_type].forward_kinematics(input_angles)
         return output_frame[:3, 3], output_frame[:3, :3]
 
+    # def finger_inverse_kinematics(self, finger_type, input_position, seed = None):
+    #     # Checking if the input figner type is a valid one
+    #     if finger_type not in self.hand_configs['fingers'].keys():
+    #         print('Finger type does not exist')
+    #         return
+        
+    #     if seed is not None:
+    #         # Checking if the number of angles is equal to 4
+    #         if len(seed) != self.hand_configs['joints_per_finger']:
+    #             print('Incorrect seed array length')
+    #             return 
+
+    #         # Clipping the input angles based on the finger type
+    #         finger_info = self.finger_configs['links_info'][finger_type]
+    #         for iterator in range(len(seed)):
+    #             if seed[iterator] > finger_info['joint_max'][iterator]:
+    #                 seed[iterator] = finger_info['joint_max'][iterator]
+    #             elif seed[iterator] < finger_info['joint_min'][iterator]:
+    #                 seed[iterator] = finger_info['joint_min'][iterator]
+
+    #         # Padding values at the beginning and the end to get for a (1x6) array
+    #         seed = list(seed)
+    #         seed.insert(0, 0)
+    #         seed.append(0)
+
+    #     output_angles = self.chains[finger_type].inverse_kinematics(input_position, initial_position = seed)
+    #     return output_angles[1:5]
+
     def finger_inverse_kinematics(self, finger_type, input_position, seed = None):
         # Checking if the input figner type is a valid one
-        if finger_type not in self.hand_configs['fingers'].keys():
-            print('Finger type does not exist')
+        if finger_type not in self.hand_configs["fingers"].keys():
+            print("Finger type does not exist")
             return
-        
+
         if seed is not None:
             # Checking if the number of angles is equal to 4
-            if len(seed) != self.hand_configs['joints_per_finger']:
-                print('Incorrect seed array length')
+            if len(seed) != self.hand_configs["joints_per_finger"]:
+                print("Incorrect seed array length")
                 return 
 
             # Clipping the input angles based on the finger type
-            finger_info = self.finger_configs['links_info'][finger_type]
-            for iterator in range(len(seed)):
-                if seed[iterator] > finger_info['joint_max'][iterator]:
-                    seed[iterator] = finger_info['joint_max'][iterator]
-                elif seed[iterator] < finger_info['joint_min'][iterator]:
-                    seed[iterator] = finger_info['joint_min'][iterator]
+            finger_info = self.finger_configs["links_info"][finger_type]
+            joint_max = np.asarray(finger_info["joint_max"]) - 1e-7
+            joint_min = np.asarray(finger_info["joint_min"]) + 1e-7
+            seed = np.clip(seed, a_min=joint_min, a_max=joint_max)
 
             # Padding values at the beginning and the end to get for a (1x6) array
-            seed = list(seed)
-            seed.insert(0, 0)
-            seed.append(0)
+            _seed = np.zeros((6,), dtype=seed.dtype)
+            _seed[1:5] = seed
+            seed = _seed
 
-        output_angles = self.chains[finger_type].inverse_kinematics(input_position, initial_position = seed)
+        output_angles = self.chains[finger_type].inverse_kinematics(input_position, initial_position=seed)
         return output_angles[1:5]
 
     def get_fingertip_coords(self, joint_positions):

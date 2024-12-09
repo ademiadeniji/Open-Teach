@@ -62,10 +62,10 @@ class OculusThumbBoundCalibrator(object):
 
         _ = input("Place the thumb in the ring bottom corner.")
         ring_bottom_coord = self._get_xy_coords()
-
+        #print(ring_bottom_coord)
         _ = input("Place the thumb in the ring top corner.")
         ring_top_coord = self._get_xy_coords()
-        
+        #print(ring_top_coord)
         _ = input("Stretch the thumb to get highest ring bound z value.")
         ring_high_z = self._get_z_coord()
 
@@ -111,7 +111,6 @@ class OculusThumbBoundCalibrator(object):
 
         np.save(VR_DISPLAY_THUMB_BOUNDS_PATH, handpose_coords)
         np.save(VR_THUMB_BOUNDS_PATH, thumb_bounds)
-
         return thumb_index_bounds, thumb_middle_bounds, thumb_ring_bounds
 
     def get_bounds(self):
