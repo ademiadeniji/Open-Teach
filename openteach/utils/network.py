@@ -164,7 +164,8 @@ class ZMQCameraSubscriber(threading.Thread):
         data = pickle.loads(striped_data)
         depth_image = bl.unpack_array(data['depth_image'])
         if self._topic_type == 'iPhone_Depth':
-            return np.array(depth_image*1000, dtype = np.int16), data['timestamp']
+            depth_image[depth_image < 65500] *= 1000
+            return depth_image.astype(np.uint16), data['timestamp']
         else:
             return np.array(depth_image, dtype = np.int16), data['timestamp']
         
@@ -172,6 +173,7 @@ class ZMQCameraSubscriber(threading.Thread):
         print('Closing the subscriber socket in {}:{}.'.format(self._host, self._port))
         self.socket.close()
         self.context.term()
+
 
 # Publisher for image visualizers
 class ZMQCompressedImageTransmitter(object):
